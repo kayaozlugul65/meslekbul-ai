@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeslekBul AI</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#1e293b);
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:700px;
+}
+
+.card{
+background:#1e293b;
+padding:25px;
+border-radius:20px;
+box-shadow:0 0 25px rgba(0,0,0,.3);
+animation:fade .5s ease;
+}
+
+h1{
+margin-bottom:15px;
+}
+
+button{
+padding:12px 20px;
+background:#3b82f6;
+border:none;
+border-radius:10px;
+color:white;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+}
+
+.hidden{
+display:none;
+}
+
+.progress{
+width:100%;
+height:12px;
+background:#334155;
+border-radius:20px;
+margin:20px 0;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+background:#22c55e;
+width:0%;
+transition:.4s;
+}
+
+.result-card{
+background:#0f172a;
+padding:15px;
+border-radius:15px;
+margin-top:15px;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="welcome" class="card">
+
+<h1>🚀 MeslekBul AI</h1>
+
+<p>
+Gelecekte sana en uygun mesleği bul.
+10 kısa soruyu cevapla.
+</p>
+
+<br>
+
+<input
+id="name"
+placeholder="İsmini yaz">
+
+<br><br>
+
+<button onclick="startQuiz()">
+Teste Başla
+</button>
+
+</div>
+
+<div id="quiz" class="card hidden">
+
+<h2 id="questionTitle"></h2>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<select id="answer"></select>
+
+<br><br>
+
+<button onclick="nextQuestion()">
+Devam
+</button>
+
+</div>
+
+<div id="result" class="card hidden">
+
+<h1 id="resultTitle"></h1>
+
+<p id="resultText"></p>
+
+<div id="top3"></div>
+
+<br>
+
+<button onclick="shareResult()">
+📤 Sonucu Kopyala
+</button>
+
+<br><br>
+
+<button onclick="location.reload()">
+🔄 Tekrar Çöz
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let current=0;
+let scores={
+
+ai:0,
+software:0,
+data:0,
+doctor:0,
+police:0,
+cyber:0,
+pilot:0,
+lawyer:0,
+psychologist:0,
+teacher:0,
+entrepreneur:0,
+architect:0,
+electronics:0,
+finance:0,
+gameDev:0
+
+};
+const questions=[
+
+{
+q:"En sevdiğin ders?",
+options:[
+"Matematik",
+"İngilizce",
+"Fen",
+"Türkçe"
+]
+},
+
+{
+q:"Bilgisayar kullanmayı sever misin?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"Yüksek maaş senin için önemli mi?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"İngilizce öğrenmeyi sever misin?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"İnsanlara yardım etmeyi sever misin?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"Masa başı iş mi?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"Risk almayı sever misin?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"Teknoloji ilgini çekiyor mu?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"Analitik düşünmeyi sever misin?",
+options:[
+"Evet",
+"Hayır"
+]
+},
+
+{
+q:"Bir takımın parçası olmak ister misin?",
+options:[
+"Evet",
+"Hayır"
+]
+}
+
+];
+
+function startQuiz(){
+
+let name=
+document.getElementById("name").value;
+
+if(name.trim()==""){
+alert("İsmini yaz.");
+return;
+}
+
+document
+.getElementById("welcome")
+.classList.add("hidden");
+
+document
+.getElementById("quiz")
+.classList.remove("hidden");
+
+showQuestion();
+
+}
+
+function showQuestion(){
+
+let q=
+questions[current];
+
+document
+.getElementById("questionTitle")
+.innerText=
+(current+1)+"/10 - "+q.q;
+
+let select=
+document.getElementById("answer");
+
+select.innerHTML="";
+
+q.options.forEach(option=>{
+
+let op=
+document.createElement("option");
+
+op.text=option;
+
+select.add(op);
+
+});
+
+document
+.getElementById("bar")
+.style.width=
+((current)/10*100)+"%";
+
+}
+
+function nextQuestion(){
+
+let answer=
+document.getElementById("answer").value;
+
+if(answer=="Matematik"){
+scores.ai+=3;
+scores.software+=3;
+scores.data+=3;
+}
+
+if(answer=="İngilizce"){
+scores.ai+=3;
+scores.software+=2;
+}
+
+if(answer=="Fen"){
+scores.doctor+=3;
+}
+
+if(answer=="Evet"){
+
+scores.ai+=2;
+scores.software+=2;
+scores.data+=1;
+
+}
+
+if(
+questions[current].q
+.includes("yardım")
+&& answer=="Evet"
+){
+scores.doctor+=4;
+scores.police+=4;
+}
+
+if(
+questions[current].q
+.includes("Risk")
+&& answer=="Evet"
+){
+scores.police+=3;
+}
+
+if(
+questions[current].q
+.includes("Teknoloji")
+&& answer=="Evet"
+){
+scores.ai+=5;
+scores.software+=4;
+}
+
+current++;
+
+if(current>=questions.length){
+
+finishQuiz();
+return;
+
+}
+
+showQuestion();
+
+}
+
+function finishQuiz(){
+
+document
+.getElementById("quiz")
+.classList.add("hidden");
+
+document
+.getElementById("result")
+.classList.remove("hidden");
+let arr=[
+
+{
+name:"🤖 Yapay Zeka Mühendisi",
+score:scores.ai
+},
+
+{
+name:"💻 Yazılım Mühendisi",
+score:scores.software
+},
+
+{
+name:"📊 Veri Bilimci",
+score:scores.data
+},
+
+{
+name:"🔐 Siber Güvenlik Uzmanı",
+score:scores.cyber
+},
+
+{
+name:"🎮 Oyun Geliştirici",
+score:scores.gameDev
+},
+
+{
+name:"👮 Polis",
+score:scores.police
+},
+
+{
+name:"🩺 Doktor",
+score:scores.doctor
+},
+
+{
+name:"✈️ Pilot",
+score:scores.pilot
+},
+
+{
+name:"⚖️ Avukat",
+score:scores.lawyer
+},
+
+{
+name:"🧠 Psikolog",
+score:scores.psychologist
+},
+
+{
+name:"👨‍🏫 Öğretmen",
+score:scores.teacher
+},
+
+{
+name:"💼 Girişimci",
+score:scores.entrepreneur
+},
+
+{
+name:"🏠 Mimar",
+score:scores.architect
+},
+
+{
+name:"⚡ Elektrik-Elektronik Mühendisi",
+score:scores.electronics
+},
+
+{
+name:"📈 Finans Uzmanı",
+score:scores.finance
+}
+
+];
+
+arr.sort((a,b)=>b.score-a.score);
+
+let user=
+document.getElementById("name").value;
+
+document
+.getElementById("resultTitle")
+.innerHTML=
+"🎯 "+user+" için sonuç";
+
+document
+.getElementById("resultText")
+.innerHTML=
+"Senin için en uygun meslek: <b>"
++arr[0].name+
+"</b>";
+
+document
+.getElementById("top3")
+.innerHTML=
+
+`
+<div class="result-card">
+🥇 ${arr[0].name}
+</div>
+
+<div class="result-card">
+🥈 ${arr[1].name}
+</div>
+
+<div class="result-card">
+🥉 ${arr[2].name}
+</div>
+`;
+
+}
+
+function shareResult(){
+
+let text=
+document
+.getElementById("resultText")
+.innerText;
+
+navigator.clipboard
+.writeText(text);
+
+alert("Sonuç panoya kopyalandı ✅");
+
+}
+
+</script>
+
+</body>
+</html>
+
+
